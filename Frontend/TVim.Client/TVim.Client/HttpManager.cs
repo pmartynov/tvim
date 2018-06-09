@@ -1,9 +1,13 @@
 ﻿using System;
+using System.IO;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using TVim.Client.Helpers;
 using TVim.Client.Models;
 using TVim.Client.Models.Errors;
 
@@ -43,7 +47,7 @@ namespace TVim.Client
                 Console.WriteLine(e);
                 throw;
             }
-        
+
         }
 
 
@@ -53,6 +57,34 @@ namespace TVim.Client
             return await response.Result.Content.ReadAsStringAsync();
         }
 
+        public async Task<OperationResult<MediaModel>> UploadMedia(string url, UploadMediaModel model, CancellationToken token)
+        {
+            var fTitle = Guid.NewGuid().ToString();
+
+            MemoryStream stream;
+            using (WebClient client = new WebClient())
+            {
+                var bytes = client.DownloadData(new Uri(model.Url));
+                stream = new MemoryStream(bytes);
+            }
+
+            var file = new StreamContent(stream);
+            file.Headers.ContentType = MediaTypeHeaderValue.Parse(model.ContentType);
+            var multiContent = new MultipartFormDataContent
+            {
+                {new StringContent(model.VerifyTransaction), "trx"},
+                {file, "file", fTitle},
+                {new StringContent(model.GenerateThumbnail.ToString()), "generate_thumbnail"}
+            };
+
+            var response = await _client.PostAsync(url, multiContent, token);
+            var result = await CreateResult<MediaModel>(response, token);
+
+            if (result.IsError && result.Result == null)
+                result.Error = new ErrorBase("Can`t upload image!");
+
+            return result;
+        }
 
         protected virtual async Task<OperationResult<T>> CreateResult<T>(HttpResponseMessage response, CancellationToken ct)
         {
@@ -89,6 +121,5 @@ namespace TVim.Client
             return result;
         }
         #endregion
-
     }
 }
