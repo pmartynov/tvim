@@ -6,7 +6,12 @@
 #include <eosiolib/asset.hpp>
 
 #define vim_releace_tokens asset(200000000 0000, string_to_symbol(4, "VIM")) // 200 000 000.0000 VIM
-#define vim_token asset(0, string_to_symbol(4, "VIM"))
+#define vim_token asset(100, string_to_symbol(4, "VIM"))
+
+#define BLOCKS_IN_YEAR (365*24*60*60)
+#define FULL_PERSENT 1000000
+#define INFLATION_PERSENT 200000
+#define INFLATION (FULL_PERSENT/INFLATION_PERSENT)
 
 namespace eosio {
 namespace structures {
