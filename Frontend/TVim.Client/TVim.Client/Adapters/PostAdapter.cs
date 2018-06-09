@@ -14,14 +14,14 @@ using Square.Picasso;
 
 namespace TVim.Client.Activity
 {
-    public class FeedAdapter : RecyclerView.Adapter
+    public class PostAdapter : RecyclerView.Adapter
     {
         protected readonly Context Context;
         private List<Post> _items;
 
         public override int ItemCount => _items.Count;
 
-        public FeedAdapter(Context context, List<Post> items)
+        public PostAdapter(Context context, List<Post> items)
         {
             Context = context;
             _items = items;

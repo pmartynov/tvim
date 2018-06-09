@@ -55,7 +55,7 @@
     <Reference Include="Mono.Android" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Adapters\FeedAdapter.cs" />
+    <Compile Include="Adapters\PostAdapter.cs" />
     <Compile Include="Activity\MainActivity.cs" />
     <None Include="Assets\DebugAsset.txt.template" />
     <AndroidAsset Include="Assets\DebugAsset.txt" />
