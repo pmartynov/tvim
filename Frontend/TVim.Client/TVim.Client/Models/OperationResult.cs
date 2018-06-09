@@ -4,7 +4,7 @@ namespace TVim.Client.Models
 {
     public class OperationResult
     {
-        public bool Iserror => Error != null;
+        public bool IsError => Error != null;
 
         public ErrorBase Error { get; set; }
 
