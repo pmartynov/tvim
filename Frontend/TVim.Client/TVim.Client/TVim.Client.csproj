@@ -58,6 +58,9 @@
     <Reference Include="Mono.Android" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Models\Generated\EOS\PermissionLevel.cs" />
+    <Compile Include="Models\Generated\EOS\Messages.cs" />
+    <Compile Include="Models\Generated\EOS\PushTransactionArgs.cs" />
     <Compile Include="Models\Generated\EOS\Abi.cs" />
     <Compile Include="Models\Generated\EOS\AbiJsonToBinResult.cs" />
     <Compile Include="Models\Generated\EOS\Action.cs" />

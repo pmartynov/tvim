@@ -123,10 +123,61 @@ namespace TVim.Client.Activity
                 }
             };
             var abiJsonToBin = await _httpManager.PostRequest<AbiJsonToBinResult>($"{_debugAsset.ChainUrl}/abi_json_to_bin", abiJsonToBinArgs, token);
-           
 
+            var t = await _httpManager.PostRequest<JObject>($"{_debugAsset.WalletUrl}/unlock", new[] { AccountName, _debugAsset.MasterPrivateKey }, token);
+            var tt = t;
+
+            var message = new Messages
+            {
+                code = AccountName,
+                type = CreatePostActionName,
+                permission = new[]
+                 {
+                    new PermissionLevel
+                    {
+                        account = AccountName,
+                        permission = "active"
+                    }
+                },
+                data = abiJsonToBin.Result.binargs
+            };
+
+
+            var pushTransactionArgs = new PushTransactionArgs
+            {
+                //ref_block_num = (ushort)(getInfo.Result.head_block_num & 0xffff),
+                //ref_block_prefix = (uint)BitConverter.ToInt32(Hex.HexToBytes(getInfo.Result.head_block_id), 4),
+
+
+                //ref_block_num = (ushort)(getBlock.Result.block_num & 0xffff),
+                //ref_block_prefix = (uint)BitConverter.ToInt32(Hex.HexToBytes(getBlock.Result.id), 4),
+
+                ref_block_num = getBlock.Result.block_num,
+                ref_block_prefix = getBlock.Result.ref_block_prefix,
+                expiration = getBlock.Result.timestamp.AddSeconds(30),
+                scope = new[] { AccountName },
+                messages = new[] { message },
+                signatures = new string[0]
+            };
+
+            var signTransaction = await _httpManager.PostRequest<AbiJsonToBinResult>($"{_debugAsset.WalletUrl}/sign_transaction",
+                new object[]
+                {
+                    pushTransactionArgs,
+                    new[]
+                    {
+                        getAccount.Result.permissions.FirstOrDefault(p => p.perm_name == "active").required_auth.keys[0].key
+                    },
+                    ""
+                }, token);
+
+            var r = signTransaction;
 
             //const std::string& acc_name, const std::string& url, const std::string& hash, const std::string& requesting_acc_name, const std::string& key
         }
     }
 }
+
+
+
+

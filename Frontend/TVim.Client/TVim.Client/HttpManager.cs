@@ -49,6 +49,27 @@ namespace TVim.Client
             }
         }
 
+        public async Task<OperationResult<T>> PostRequest<T>(string url, string param, CancellationToken token)
+        {
+            try
+            {
+                HttpContent content = null;
+                if (!string.IsNullOrEmpty(param))
+                {
+                    content = new StringContent(param, Encoding.UTF8, "application/json");
+                }
+
+                var response = await _client.PostAsync(url, content, token);
+                return await CreateResult<T>(response, token);
+            }
+            catch (Exception e)
+            {
+                var t = e.Message;
+            }
+
+            return null;
+        }
+
         public async Task<OperationResult<T>> PostRequest<T>(string url, object data, CancellationToken token)
         {
             try
@@ -65,8 +86,10 @@ namespace TVim.Client
             }
             catch (Exception e)
             {
-                throw;
+                var t = e.Message;
             }
+
+            return null;
         }
 
         public async Task<string> Get(string url)

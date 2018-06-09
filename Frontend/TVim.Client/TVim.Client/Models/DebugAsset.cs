@@ -13,6 +13,12 @@ namespace TVim.Client.Models
         [JsonProperty("chain_url")]
         public string ChainUrl { get; set; }
 
+        [JsonProperty("wallet_url")]
+        public string WalletUrl { get; set; }
+
         public string LastLoadedMediaId { get; set; }
+
+        [JsonProperty("master_private_key")]
+        public string MasterPrivateKey { get; set; }
     }
 }
