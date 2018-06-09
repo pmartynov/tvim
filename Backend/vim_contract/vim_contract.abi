@@ -1,0 +1,60 @@
+{
+  "types": [{
+      "new_type_name": "account_name",
+      "type": "name"
+  }],
+  "structs": [{
+      "name": "transfer",
+      "base": "",
+      "fields": [
+        {"name":"from",       "type":"account_name"},
+        {"name":"to",         "type":"account_name"},
+        {"name":"amount",     "type":"asset"},
+        {"name":"url_photo",  "type":"string"},
+        {"name":"hash_photo", "type":"string"}
+      ]
+    }, {
+      "name": "name_acc",
+      "base": "",
+      "fields": [
+        {"name":"account", "type":"account_name"}
+      ]
+    }, {
+      "name": "balance_acc",
+      "base": "name_acc",
+      "fields": [
+        {"name":"balance", "type":"asset"}
+      ]
+    }, {
+    "name": "hash",
+    "base": "",
+    "fields": [
+      {"name":"hash", "type":"uint32"}
+    ]
+  }
+  ],
+  "actions": [{
+      "name": "transfer",
+      "type": "transfer",
+      "ricardian_contract": ""
+    }, {
+      "name": "appendacc",
+      "type": "name_acc",
+      "ricardian_contract": ""
+    }, {
+      "name": "emission",
+      "type": "name_acc",
+      "ricardian_contract": ""
+    }
+  ],
+  "tables": [{
+        "name": "games",
+        "type": "game",
+        "index_type": "i64",
+        "key_names" : ["challenger"],
+        "key_types" : ["account_name"]
+      }
+  ],
+  "ricardian_clauses": [],
+  "abi_extensions": []
+}
