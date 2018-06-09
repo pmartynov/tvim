@@ -1,0 +1,94 @@
+{
+  "types": [{
+      "new_type_name": "account_name",
+      "type": "name"
+  }],
+  "structs": [{
+      "name": "transfer",
+      "base": "",
+      "fields": [
+        {"name":"from",       "type":"account_name"},
+        {"name":"to",         "type":"account_name"},
+        {"name":"amount",     "type":"asset"},
+        {"name":"url_photo",  "type":"string"},
+        {"name":"hash_photo", "type":"string"}
+      ]
+    },{
+      "name": "name_acc",
+      "base": "",
+      "fields": [
+        {"name":"account", "type":"account_name"}
+      ]
+    },{
+      "name": "balance_acc",
+      "base": "name_acc",
+      "fields": [
+        {"name":"balance", "type":"asset"}
+      ]
+    },{
+    "name": "hash",
+    "base": "",
+    "fields": [
+      {"name":"hash", "type":"uint32"}
+    ]
+    },{
+      "name": "post_not_id",
+      "base": "",
+      "fields": [
+        {"name":"creator", "type":"account_name"},
+        {"name":"url_photo", "type":"string"},
+        {"name":"hash_photo", "type":"string"}
+      ]
+    },{
+      "name": "post",
+      "base": "post_not_id",
+      "fields": [
+        {"name":"id", "type":"uint64"}
+      ]
+    }
+  ],
+  "actions": [{
+      "name": "transfer",
+      "type": "transfer",
+      "ricardian_contract": ""
+    },{
+      "name": "createacc",
+      "type": "name_acc",
+      "ricardian_contract": ""
+    },{
+      "name": "emission",
+      "type": "hash",
+      "ricardian_contract": ""
+    },{
+      "name": "init",
+      "type": "",
+      "ricardian_contract": ""
+    },{
+      "name": "createpost",
+      "type": "post_not_id",
+      "ricardian_contract": ""
+    }
+  ],
+  "tables": [{
+      "name": "account",
+      "type": "balance_acc",
+      "index_type": "i64",
+      "key_names" : ["currency"],
+      "key_types" : ["uint64"]
+    },{
+      "name": "accounts",
+      "type": "name_acc",
+      "index_type": "i64",
+      "key_names" : ["account"],
+      "key_types" : ["account_name"]
+    },{
+      "name": "posts",
+      "type": "post",
+      "index_type": "i64",
+      "key_names" : ["id"],
+      "key_types" : ["uint64"]
+   }
+  ],
+  "ricardian_clauses": [],
+  "abi_extensions": []
+}
