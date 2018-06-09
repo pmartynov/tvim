@@ -19,7 +19,7 @@ public:
    void plugin_shutdown();
 
 private:
-   std::unique_ptr<class vim_plugin_impl> my;
+   std::unique_ptr<struct vim_plugin_impl> my;
 };
 
 }
