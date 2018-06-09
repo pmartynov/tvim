@@ -21,7 +21,7 @@
       ]
     },{
       "name": "balance_acc",
-      "base": "name_acc",
+      "base": "",
       "fields": [
         {"name":"balance", "type":"asset"}
       ]
@@ -45,6 +45,19 @@
       "fields": [
         {"name":"id", "type":"uint64"}
       ]
+    },{
+      "name": "info",
+      "base": "",
+      "fields": [
+        {"name":"tokens", "type":"asset"},
+        {"name":"key", "type":"uint8"}
+      ]
+    },{
+      "name": "status",
+      "base": "",
+      "fields": [
+        {"name":"status", "type":"uint8"}
+      ]
     }
   ],
   "actions": [{
@@ -61,7 +74,7 @@
       "ricardian_contract": ""
     },{
       "name": "init",
-      "type": "",
+      "type": "status",
       "ricardian_contract": ""
     },{
       "name": "createpost",
@@ -70,24 +83,24 @@
     }
   ],
   "tables": [{
-      "name": "account",
-      "type": "balance_acc",
-      "index_type": "i64",
-      "key_names" : ["currency"],
-      "key_types" : ["uint64"]
-    },{
       "name": "accounts",
       "type": "name_acc",
       "index_type": "i64",
       "key_names" : ["account"],
       "key_types" : ["account_name"]
     },{
+      "name": "account",
+      "type": "balance_acc",
+      "index_type": "i64",
+      "key_names" : ["currency"],
+      "key_types" : ["uint64"]
+    },{
       "name": "posts",
       "type": "post",
       "index_type": "i64",
       "key_names" : ["id"],
       "key_types" : ["uint64"]
-   }
+    }
   ],
   "ricardian_clauses": [],
   "abi_extensions": []

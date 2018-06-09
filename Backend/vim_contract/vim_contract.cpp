@@ -9,7 +9,7 @@ extern "C" {
 
    /// The apply method implements the dispatch of events to this contract
    void apply( uint64_t receiver, uint64_t code, uint64_t action ) {
-      eosio::vim_controller(receiver).apply(code, action);
+       eosio::vim_controller(receiver).apply(code, action);
    }
 
 } // extern "C"
@@ -27,7 +27,7 @@ void vim_controller::apply(uint64_t /*code*/, uint64_t action) {
     case N(init):
         init_contract();
         break;
-    case N(appendacc):
+    case N(createacc):
         create_account(unpack_action_data<st_account>());
         break;
     case N(transfer):
@@ -46,6 +46,7 @@ void vim_controller::apply(uint64_t /*code*/, uint64_t action) {
 }
 
 void vim_controller::init_contract() {
+    print(name{get_self()} );
     create_account(st_account(get_self()));
     inline_emission();
 }
@@ -70,12 +71,22 @@ void vim_controller::create_post(const st_post_not_id &m_st_post_not_id) {
 }
 
 void vim_controller::transfer(const st_transfer &m_st_transfer) {
+    eosio_assert( m_st_transfer.from != m_st_transfer.to, "cannot transfer to self" );
+    require_auth( m_st_transfer.from );
+    eosio_assert( is_account( m_st_transfer.to ), "to account does not exist");
 
+    require_recipient( m_st_transfer.from );
+    require_recipient( m_st_transfer.to );
+
+    eosio_assert( m_st_transfer.amount.is_valid(), "invalid quantity" );
+    eosio_assert( m_st_transfer.amount.amount > 0, "must transfer positive quantity" );
+
+    sub_balance( m_st_transfer.from, m_st_transfer.amount );
+    add_balance( m_st_transfer.to, m_st_transfer.amount, m_st_transfer.from );
 }
 
-void vim_controller::emission(const st_hash &m_st_hash) {
-
-
+void vim_controller::emission(const st_hash &/*m_st_hash*/) {
+    print(__FUNCTION__);
     inline_emission();
 }
 
@@ -88,11 +99,33 @@ void vim_controller::inline_emission() {
 }
 
 void vim_controller::sub_balance(account_name owner, asset value) {
+    tables::account_table table(get_self(), owner);
 
+    const auto& from = table.get(value.symbol.name(), "no balance object found");
+    eosio_assert(from.balance.amount >= value.amount, "overdrawn balance");
+
+    if(from.balance.amount == value.amount) {
+       table.erase(from);
+    } else {
+       table.modify(from, owner, [&](auto& item) {
+           item.balance -= value;
+       });
+    }
 }
 
 void vim_controller::add_balance(account_name owner, asset value, account_name ram_payer) {
+    tables::account_table table(get_self(), owner);
 
+    auto to = table.find(value.symbol.name());
+    if(to == table.end()) {
+       table.emplace(ram_payer, [&]( auto& item ){
+         item.balance = value;
+       });
+    } else {
+       table.modify( to, 0, [&]( auto& item ) {
+         item.balance += value;
+       });
+    }
 }
 
 template<typename T, typename K>
