@@ -56,6 +56,28 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Activity\MainActivity.cs" />
+    <None Include="Assets\DebugAsset.txt.template" />
+    <AndroidAsset Include="Assets\DebugAsset.txt" />
+    <Compile Include="Models\DebugAsset.cs" />
+    <Compile Include="Helpers\AssetHelper.cs" />
+    <Compile Include="HttpManager.cs" />
+    <Compile Include="InstagramToTvimAdapter.cs" />
+    <Compile Include="Models\Errors\ServerError.cs" />
+    <Compile Include="Models\Errors\ErrorBase.cs" />
+    <Compile Include="Models\Generated\Instagram\Caption.cs" />
+    <Compile Include="Models\Generated\Instagram\Comments.cs" />
+    <Compile Include="Models\Generated\Instagram\Datum.cs" />
+    <Compile Include="Models\Generated\Instagram\From.cs" />
+    <Compile Include="Models\Generated\Instagram\Images.cs" />
+    <Compile Include="Models\Generated\Instagram\Likes.cs" />
+    <Compile Include="Models\Generated\Instagram\LowResolution.cs" />
+    <Compile Include="Models\Generated\Instagram\Meta.cs" />
+    <Compile Include="Models\Generated\Instagram\InstagramResult.cs" />
+    <Compile Include="Models\Generated\Instagram\StandardResolution.cs" />
+    <Compile Include="Models\Generated\Instagram\Thumbnail.cs" />
+    <Compile Include="Models\Generated\Instagram\User.cs" />
+    <Compile Include="Models\OperationResult.cs" />
+    <Compile Include="Models\Generated\Instagram\Pagination.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -91,6 +113,12 @@
     <AndroidResource Include="Resources\mipmap-xxxhdpi\ic_launcher_round.png" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json">
+      <Version>11.0.2</Version>
+    </PackageReference>
+    <PackageReference Include="System.Net.Http">
+      <Version>4.3.3</Version>
+    </PackageReference>
     <PackageReference Include="Xamarin.Android.Support.Design" Version="27.0.2" />
   </ItemGroup>
   <ItemGroup />
