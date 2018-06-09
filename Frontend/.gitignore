@@ -287,7 +287,5 @@ __pycache__/
 *.btm.cs
 *.odx.cs
 *.xsd.cs
-Sources/Ditch.Steem.Tests/app.config
-Sources/Ditch.Golos.Tests/app.config
-Sources/Ditch.EOS.Tests/app.config
-Sources/Ditch.BitShares.Tests/app.config
+
+TVim.Client/TVim.Client/Assets/DebugAsset.txt
