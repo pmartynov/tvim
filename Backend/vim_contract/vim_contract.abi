@@ -37,23 +37,43 @@
       "name": "transfer",
       "type": "transfer",
       "ricardian_contract": ""
-    }, {
-      "name": "appendacc",
+    },{
+      "name": "createacc",
       "type": "name_acc",
       "ricardian_contract": ""
-    }, {
+    },{
       "name": "emission",
-      "type": "name_acc",
+      "type": "hash",
+      "ricardian_contract": ""
+    },{
+      "name": "init",
+      "type": "",
+      "ricardian_contract": ""
+    },{
+      "name": "createpost",
+      "type": "",
       "ricardian_contract": ""
     }
   ],
   "tables": [{
-        "name": "games",
-        "type": "game",
-        "index_type": "i64",
-        "key_names" : ["challenger"],
-        "key_types" : ["account_name"]
-      }
+      "name": "account",
+      "type": "balance_acc",
+      "index_type": "i64",
+      "key_names" : ["currency"],
+      "key_types" : ["uint64"]
+    },{
+      "name": "accounts",
+      "type": "name_acc",
+      "index_type": "i64",
+      "key_names" : ["account"],
+      "key_types" : ["account_name"]
+    },{
+      "name": "posts",
+      "type": "post",
+      "index_type": "i64",
+      "key_names" : ["id"],
+      "key_types" : ["uint64"]
+   }
   ],
   "ricardian_clauses": [],
   "abi_extensions": []

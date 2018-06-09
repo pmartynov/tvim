@@ -5,12 +5,10 @@
 #include <eosiolib/eosio.hpp>
 #include <eosiolib/asset.hpp>
 
+#define vim_releace_tokens asset(200000000 0000, string_to_symbol(4, "VIM")) // 200 000 000.0000 VIM
+#define vim_token asset(0, string_to_symbol(4, "VIM"))
+
 namespace eosio {
-
-namespace tokens {
-//using vim_token = asset(0, string_to_symbol(4, 'VIM'));
-};
-
 namespace structures {
 
 struct st_transfer {
@@ -44,6 +42,10 @@ struct st_post {
     std::string url_photo;
     std::string hash_photo;
 
+    uint64_t primary_key()const {
+        return id;
+    }
+
     EOSLIB_SERIALIZE( st_post, (id)(creator)(url_photo)(hash_photo) )
 };
 
@@ -53,16 +55,33 @@ struct st_account
     st_account() = default;
 
     account_name account;
+
+    account_name primary_key()const {
+        return account;
+    }
+
     EOSLIB_SERIALIZE( st_account, (account) )
 };
 
-struct st_account_balance : public st_account
+struct st_account_balance
 {
     st_account_balance() = default;
 
     asset balance;
-    EOSLIB_SERIALIZE( st_account_balance, (account)(balance) )
+
+    uint64_t primary_key()const {
+        return balance.symbol.name();
+    }
+
+    EOSLIB_SERIALIZE( st_account_balance, (balance) )
 };
 
 };
+
+namespace tables {
+using posts_table = multi_index<N(posts), structures::st_post>;
+using account_table = multi_index<N(account), structures::st_account_balance>;
+using accounts_table = multi_index<N(accounts), structures::st_account>;
+};
+
 }
