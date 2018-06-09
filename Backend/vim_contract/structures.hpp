@@ -29,18 +29,33 @@ struct st_transfer {
 
 struct st_hash {
     st_hash() = default;
+    st_hash(uint32_t m_hash)
+        :hash(m_hash)
+    {}
+
     uint32_t hash;
 
     EOSLIB_SERIALIZE( st_hash, (hash) )
 };
 
-struct st_post {
-    st_post() = default;
+struct st_post_not_id {
+    st_post_not_id() = default;
 
-    uint64_t id;
     account_name creator;
     std::string url_photo;
     std::string hash_photo;
+
+    EOSLIB_SERIALIZE( st_post_not_id, (creator)(url_photo)(hash_photo) )
+};
+
+struct st_post : public st_post_not_id
+{
+    st_post() = default;
+    st_post(const st_post_not_id &m_post, const uint64_t &m_id)
+        :st_post_not_id(m_post), id(m_id)
+    {}
+
+    uint64_t id;
 
     uint64_t primary_key()const {
         return id;
@@ -53,6 +68,9 @@ struct st_post {
 struct st_account
 {
     st_account() = default;
+    st_account(const account_name &m_account)
+        : account(m_account)
+    {}
 
     account_name account;
 

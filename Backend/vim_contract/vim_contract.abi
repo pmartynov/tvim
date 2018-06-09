@@ -13,25 +13,39 @@
         {"name":"url_photo",  "type":"string"},
         {"name":"hash_photo", "type":"string"}
       ]
-    }, {
+    },{
       "name": "name_acc",
       "base": "",
       "fields": [
         {"name":"account", "type":"account_name"}
       ]
-    }, {
+    },{
       "name": "balance_acc",
       "base": "name_acc",
       "fields": [
         {"name":"balance", "type":"asset"}
       ]
-    }, {
+    },{
     "name": "hash",
     "base": "",
     "fields": [
       {"name":"hash", "type":"uint32"}
     ]
-  }
+    },{
+      "name": "post_not_id",
+      "base": "",
+      "fields": [
+        {"name":"creator", "type":"account_name"},
+        {"name":"url_photo", "type":"string"},
+        {"name":"hash_photo", "type":"string"}
+      ]
+    },{
+      "name": "post",
+      "base": "post_not_id",
+      "fields": [
+        {"name":"id", "type":"uint64"}
+      ]
+    }
   ],
   "actions": [{
       "name": "transfer",
@@ -51,7 +65,7 @@
       "ricardian_contract": ""
     },{
       "name": "createpost",
-      "type": "",
+      "type": "post_not_id",
       "ricardian_contract": ""
     }
   ],

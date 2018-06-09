@@ -1,4 +1,5 @@
 #include "vim_contract.hpp"
+#include <eosiolib/transaction.hpp>
 
 /**
 *  The apply() methods must have C calling convention so that the blockchain can lookup and
@@ -36,7 +37,7 @@ void vim_controller::apply(uint64_t /*code*/, uint64_t action) {
         emission(unpack_action_data<st_hash>());
         break;
     case N(createpost):
-        create_post(unpack_action_data<st_post>());
+        create_post(unpack_action_data<st_post_not_id>());
         break;
     default:
         eosio_assert(false, "Incorrectly specified action");
@@ -45,26 +46,27 @@ void vim_controller::apply(uint64_t /*code*/, uint64_t action) {
 }
 
 void vim_controller::init_contract() {
-    if (!find_data(_table_accounts, get_self())) {
-        tables::account_table table(get_self(), get_self());
-        table.emplace(get_self(), [&](auto &item) {
-            item.balance = vim_token;
-        });
-
-        _table_accounts.emplace(get_self(), [&](auto &item) {
-            item.account = get_self();
-        });
-    }
-
+    create_account(st_account(get_self()));
     inline_emission();
 }
 
 void vim_controller::create_account(const st_account &m_st_account) {
+    if (find_data(_table_accounts, m_st_account.account))
+        eosio_assert(false, "Account exists");
+    tables::account_table table(get_self(), m_st_account.account);
+    table.emplace(get_self(), [&](auto &item) {
+        item.balance = vim_token;
+    });
 
+    _table_accounts.emplace(get_self(), [&](auto &item) {
+        item.account = m_st_account.account;
+    });
 }
 
-void vim_controller::create_post(const st_post &m_st_post) {
-
+void vim_controller::create_post(const st_post_not_id &m_st_post_not_id) {
+    _table_posts.emplace(get_self(), [&](auto &item) {
+        item = st_post(m_st_post_not_id, _table_posts.available_primary_key());
+    });
 }
 
 void vim_controller::transfer(const st_transfer &m_st_transfer) {
@@ -73,9 +75,23 @@ void vim_controller::transfer(const st_transfer &m_st_transfer) {
 
 void vim_controller::emission(const st_hash &m_st_hash) {
 
+
+    inline_emission();
 }
 
 void vim_controller::inline_emission() {
+    transaction trx;
+    action trx_action( permission_level(get_self(), N(active)), get_self(), N(emission), st_hash(now()));
+    trx.actions.emplace_back(trx_action);
+    trx.delay_sec = 5;
+    trx.send(now(), get_self());
+}
+
+void vim_controller::sub_balance(account_name owner, asset value) {
+
+}
+
+void vim_controller::add_balance(account_name owner, asset value, account_name ram_payer) {
 
 }
 
