@@ -47,9 +47,27 @@ namespace TVim.Client
                 Console.WriteLine(e);
                 throw;
             }
-
         }
 
+        public async Task<OperationResult<T>> PostRequest<T>(string url, object data, CancellationToken token)
+        {
+            try
+            {
+                HttpContent content = null;
+                if (data != null)
+                {
+                    var param = JsonConvert.SerializeObject(data);
+                    content = new StringContent(param, Encoding.UTF8, "application/json");
+                }
+
+                var response = await _client.PostAsync(url, content, token);
+                return await CreateResult<T>(response, token);
+            }
+            catch (Exception e)
+            {
+                throw;
+            }
+        }
 
         public async Task<string> Get(string url)
         {
@@ -104,13 +122,13 @@ namespace TVim.Client
                 return result;
 
             var mediaType = response.Content.Headers?.ContentType?.MediaType.ToLower();
-
             if (mediaType != null)
             {
                 if (mediaType.Equals("application/json"))
                 {
                     var content = await response.Content.ReadAsStringAsync();
-                    result.Result = JsonConvert.DeserializeObject<T>(content);
+                    if (!string.IsNullOrEmpty(content))
+                        result.Result = JsonConvert.DeserializeObject<T>(content);
                 }
                 else
                 {

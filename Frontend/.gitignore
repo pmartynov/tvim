@@ -289,3 +289,4 @@ __pycache__/
 *.xsd.cs
 
 TVim.Client/TVim.Client/Assets/DebugAsset.txt
+TVim.Client/TVim.Client/Resources/Resource.Designer.cs

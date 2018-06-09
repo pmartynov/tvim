@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Android.App;
 using Android.Content;
 using Android.Graphics;
 using Android.Graphics.Drawables;
@@ -48,6 +49,8 @@ namespace TVim.Client.Activity
             protected readonly Context Context;
 
             private readonly ImageView _image;
+            private readonly Button _getPost;
+
 
             protected Post Post;
 
@@ -55,7 +58,17 @@ namespace TVim.Client.Activity
             {
                 Context = itemView.Context;
                 _image = itemView.FindViewById<ImageView>(Resource.Id.image);
+                _getPost = itemView.FindViewById<Button>(Resource.Id.get_post);
+                _getPost.Click += _getPost_Click;
+            }
 
+            private void _getPost_Click(object sender, EventArgs e)
+            {
+                var msg = $"{Post.AccauntName}{System.Environment.NewLine}{Post.Url}";
+                var alert = new AlertDialog.Builder(Context);
+                alert.SetMessage(msg);
+                Dialog dialog = alert.Create();
+                dialog.Show();
             }
 
             public void UpdateData(Post post, Context context)
@@ -63,6 +76,12 @@ namespace TVim.Client.Activity
                 Post = post;
                 Picasso.With(Context).Load(Post.Url).Into(_image);
             }
+        }
+
+        public void Update(List<Post> posts)
+        {
+            _items = posts;
+            NotifyDataSetChanged();
         }
     }
 }

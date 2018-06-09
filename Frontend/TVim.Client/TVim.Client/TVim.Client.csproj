@@ -26,7 +26,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>True</DebugSymbols>
     <DebugType>Full</DebugType>
-    <Optimize>False</Optimize>
+    <Optimize>true</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
@@ -34,6 +34,9 @@
     <AndroidUseSharedRuntime>True</AndroidUseSharedRuntime>
     <AndroidLinkMode>None</AndroidLinkMode>
     <EmbedAssembliesIntoApk>False</EmbedAssembliesIntoApk>
+    <AotAssemblies>false</AotAssemblies>
+    <EnableLLVM>false</EnableLLVM>
+    <BundleAssemblies>false</BundleAssemblies>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugSymbols>True</DebugSymbols>
@@ -55,10 +58,34 @@
     <Reference Include="Mono.Android" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Models\Generated\EOS\Abi.cs" />
+    <Compile Include="Models\Generated\EOS\AbiJsonToBinResult.cs" />
+    <Compile Include="Models\Generated\EOS\Action.cs" />
+    <Compile Include="Models\Generated\EOS\CpuLimit.cs" />
+    <Compile Include="Models\Generated\EOS\Field.cs" />
+    <Compile Include="Models\Generated\EOS\GetAccountResult.cs" />
+    <Compile Include="Models\Generated\EOS\GetBlockResult.cs" />
+    <Compile Include="Models\Generated\EOS\CreatePostArgs.cs" />
+    <Compile Include="Models\Generated\EOS\AbiJsonToBinParams.cs" />
+    <Compile Include="Models\Generated\EOS\GetAccountArgs.cs" />
+    <Compile Include="Models\Generated\EOS\GetBlockArgs.cs" />
+    <Compile Include="Models\Generated\EOS\GetCodeArgs.cs" />
+    <Compile Include="Models\Generated\EOS\GetCodeResult.cs" />
+    <Compile Include="Models\Generated\EOS\GetPostArgs.cs" />
     <Compile Include="Adapters\PostAdapter.cs" />
     <Compile Include="Activity\MainActivity.cs" />
     <None Include="Assets\DebugAsset.txt.template" />
     <AndroidAsset Include="Assets\DebugAsset.txt" />
+    <Compile Include="Models\Generated\EOS\GetTableRowsResult.cs" />
+    <Compile Include="Models\Generated\EOS\GetInfoResult.cs" />
+    <Compile Include="Models\Generated\EOS\Key.cs" />
+    <Compile Include="Models\Generated\EOS\NetLimit.cs" />
+    <Compile Include="Models\Generated\EOS\Permission.cs" />
+    <Compile Include="Models\Generated\EOS\RequiredAuth.cs" />
+    <Compile Include="Models\Generated\EOS\Row.cs" />
+    <Compile Include="Models\Generated\EOS\Struct.cs" />
+    <Compile Include="Models\Generated\EOS\Table.cs" />
+    <Compile Include="Models\Generated\EOS\Type.cs" />
     <Compile Include="Models\Post.cs" />
     <Compile Include="Models\Stub\MediaModel.cs" />
     <Compile Include="Models\Stub\UploadMediaModel.cs" />
@@ -136,6 +163,7 @@
       <SubType>Designer</SubType>
     </AndroidResource>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
 		Other similar extension points exist, see Microsoft.Common.targets.

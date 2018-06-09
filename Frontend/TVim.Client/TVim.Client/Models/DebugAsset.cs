@@ -10,6 +10,9 @@ namespace TVim.Client.Models
         [JsonProperty("authorization_transaction_json")]
         public string AuthorizationTransactionJson { get; set; }
 
+        [JsonProperty("chain_url")]
+        public string ChainUrl { get; set; }
+
         public string LastLoadedMediaId { get; set; }
     }
 }
