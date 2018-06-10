@@ -21,7 +21,3 @@ namespace TVim.Client.Activity
         }
     }
 }
-
-
-
-

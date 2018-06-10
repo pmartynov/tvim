@@ -64,7 +64,7 @@ namespace TVim.Client.Activity
 
             private void _getPost_Click(object sender, EventArgs e)
             {
-                var msg = $"{Post.AccauntName}{System.Environment.NewLine}{Post.Url}";
+                var msg = $"LICENSE{System.Environment.NewLine}{System.Environment.NewLine}account: {Post.AccauntName}{System.Environment.NewLine}URL:{Post.Url}{System.Environment.NewLine}IPFS:{Post.IpfsHash}";
                 var alert = new AlertDialog.Builder(Context);
                 alert.SetMessage(msg);
                 Dialog dialog = alert.Create();
@@ -83,5 +83,12 @@ namespace TVim.Client.Activity
             _items = posts;
             NotifyDataSetChanged();
         }
+
+        public void Add(Post post)
+        {
+            _items.Add(post);
+            NotifyDataSetChanged();
+        }
+
     }
 }

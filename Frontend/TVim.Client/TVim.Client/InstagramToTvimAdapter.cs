@@ -13,7 +13,7 @@ namespace TVim.Client
         protected const string AccessTokenKeyName = "insagram_access_token";
 
 
-        public async Task<OperationResult<MediaModel>> GetLastPosts(HttpManager client, DebugAsset debugAsset, CancellationToken token)
+        public async Task<OperationResult<MediaModel>> GetLastPost(HttpManager client, DebugAsset debugAsset, CancellationToken token)
         {
             //https://www.instagram.com/developer/authentication/ < how to get access_token (OAuth skiped. hardcoded key used instead... time time..)v
             var fullUrl = GetRecentMediaUrl + debugAsset.InsagramAccessToken;

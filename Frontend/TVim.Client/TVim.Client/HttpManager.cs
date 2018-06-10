@@ -84,7 +84,7 @@ namespace TVim.Client
                 HttpContent content = null;
                 if (data != null)
                 {
-                    var param = JsonConvert.SerializeObject(data, Settings);
+                    var param = JsonConvert.SerializeObject(data, Formatting.Indented, Settings);
                     content = new StringContent(param, Encoding.UTF8, "application/json");
                 }
 

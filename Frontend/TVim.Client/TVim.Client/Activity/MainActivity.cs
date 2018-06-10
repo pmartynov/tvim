@@ -44,7 +44,14 @@ namespace TVim.Client.Activity
 
 
             _uploadPost.Click += UploadPostClick;
-            var posts = new List<Post> { };
+            var posts = new List<Post>
+            {
+                new Post
+                {
+                    Url = "https://static.eos.io/images/Landing/SectionResourceLanding/DevPortLaunch_Social_Eosio-home_opt.jpg",
+                    AccauntName = ""
+                }
+            };
 
             _adapter = new PostAdapter(this, posts);
             _postList.SetAdapter(_adapter);
@@ -58,14 +65,24 @@ namespace TVim.Client.Activity
 
         private async void UploadPostClick(object sender, System.EventArgs e)
         {
-            //var operationResult = await _instagramToTvimAdapter.GetLastPosts(_httpManager, _debugAsset, CancellationToken.None);
-            //if (operationResult == null)
-            //    return;
+            var operationResult = await _instagramToTvimAdapter.GetLastPost(_httpManager, _debugAsset, CancellationToken.None);
+            if (operationResult == null)
+                return;
 
+            var post = new Post
+            {
+                Url = operationResult.Result.url,
+                AccauntName = AccountName,
+                IpfsHash = operationResult.Result.ipfs_hash
+            };
+            _adapter.Add(post);
+
+
+            //await GetPost();
+            
             //await CreatePost(operationResult.Result, CancellationToken.None);
-            await CreatePost();
+            //await CreatePost();
 
-            await GetPost();
         }
 
         private async Task GetPost()
@@ -150,15 +167,15 @@ namespace TVim.Client.Activity
             var t = await _httpManager.PostRequest<JObject>($"{_debugAsset.WalletUrl}/unlock", new[] { AccountName, _debugAsset.MasterPrivateKey }, token);
             var tt = t;
 
-            var message = new Messages
+            var action = new Action
             {
-                code = AccountName,
-                type = CreatePostActionName,
-                permission = new[]
+                account = AccountName,
+                name = CreatePostActionName,
+                authorization = new[]
                  {
-                    new PermissionLevel
+                    new Authorization()
                     {
-                        account = AccountName,
+                        actor = AccountName,
                         permission = "active"
                     }
                 },
@@ -178,8 +195,9 @@ namespace TVim.Client.Activity
                 ref_block_num = getBlock.Result.block_num,
                 ref_block_prefix = getBlock.Result.ref_block_prefix,
                 expiration = getBlock.Result.timestamp.AddSeconds(30),
-                scope = new[] { AccountName },
-                messages = new[] { message },
+
+
+                actions = new[] { action },
                 signatures = new string[0]
             };
 
@@ -196,10 +214,26 @@ namespace TVim.Client.Activity
             var signTransaction = await _httpManager.PostRequest<SignTransactionResult>($"{_debugAsset.WalletUrl}/sign_transaction", t2, token);
 
             pushTransactionArgs.signatures = signTransaction.Result.signatures.ToArray();
-            var t3 = await _httpManager.PostRequest<JObject>($"{_debugAsset.PluginUrl}/get_trx", pushTransactionArgs, token);
+            var t31 = await _httpManager.PostRequest<JObject>($"{_debugAsset.PluginUrl}/get_trx", pushTransactionArgs, token);
+
+
+            var push_transaction_args = new push_transaction_args
+            {
+                transaction = pushTransactionArgs,
+                signatures = pushTransactionArgs.signatures
+            };
+            var t3 = await _httpManager.PostRequest<JObject>($"{_debugAsset.ChainUrl}/push_transaction", push_transaction_args, token);
 
             var tt1 = t3;
             //const std::string& acc_name, const std::string& url, const std::string& hash, const std::string& requesting_acc_name, const std::string& key
+        }
+
+        public class push_transaction_args
+        {
+            public string compression { get; set; } = "none";
+            public object transaction { get; set; }
+            public string[] signatures { get; set; }
+
         }
     }
 }

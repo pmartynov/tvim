@@ -10,5 +10,10 @@ namespace TVim.Client.Activity
 
         [JsonProperty("acc_name")]
         public string AccauntName { get; set; }
+
+        [JsonProperty("ipfs_hash")]
+        public string IpfsHash { get; set; }
+
+
     }
 }

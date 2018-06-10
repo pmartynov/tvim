@@ -9,7 +9,7 @@
         android:id="@+id/image" />
     <Button
         android:id="@+id/get_post"
-        android:text="get image"
+        android:text="Purchase image"
         android:layout_below="@+id/image"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />

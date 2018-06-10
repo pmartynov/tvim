@@ -2,8 +2,15 @@
 {
     public class Action
     {
+        public string account { get; set; }
         public string name { get; set; }
-        public string type { get; set; }
-        public string ricardian_contract { get; set; }
+        public Authorization[] authorization { get; set; }
+        public string data { get; set; }
+    }
+
+    public class Authorization
+    {
+        public string actor { get; set; }
+        public string permission { get; set; }
     }
 }
