@@ -66,7 +66,7 @@ struct st_post : public st_post_not_id
         return id;
     }
 
-    EOSLIB_SERIALIZE( st_post, (id)(creator)(url_photo)(hash_photo) )
+    EOSLIB_SERIALIZE( st_post, (creator)(url_photo)(hash_photo)(id) )
 };
 
 

@@ -1,10 +1,14 @@
 #include <eosio/vim_plugin/vim_plugin.hpp>
-
+#include <eosio/wallet_plugin/wallet.hpp>
+#include <eosio/wallet_plugin/wallet_plugin.hpp>
+#include <eosio/wallet_plugin/wallet_manager.hpp>
 #include <eosio/chain_plugin/chain_plugin.hpp>
 #include <eosio/chain/wast_to_wasm.hpp>
 #include <eosio/utilities/key_conversion.hpp>
+#include <eosio/chain/transaction.hpp>
 
 #include <fc/io/json.hpp>
+
 
 #include <vim_contract/vim_contract.wast.hpp>
 #include <vim_contract/vim_contract.abi.hpp>
@@ -33,86 +37,25 @@ namespace eosio {
     } \
 }
 
-#define INVOKE_V_R(api_handle, call_name, in_param0) \
-    const auto& vs = fc::json::json::from_string(body).as<fc::variants>(); \
-    api_handle->call_name(vs.at(0).as<in_param0>()); \
-    eosio::detail::vim_empty result;
 
-#define INVOKE_V_R_R_R_R_R(api_handle, call_name, in_param0, in_param1, in_param2, in_param3, in_param4) \
-    const auto& vs = fc::json::json::from_string(body).as<fc::variants>(); \
-    api_handle->call_name(vs.at(0).as<in_param0>(), vs.at(1).as<in_param1>(), vs.at(2).as<in_param2>(), vs.at(3).as<in_param3>(), vs.at(4).as<in_param4>()); \
+#define INVOKE_V_R(api_handle, call_name) \
+    const auto& vs = fc::json::json::from_string(body).as<eosio::chain::signed_transaction>(); \
+    api_handle->call_name(vs); \
     eosio::detail::vim_empty result;
 
 struct vim_plugin_impl {
-    void push_transaction(signed_transaction& trx) { try {
+    void push_transaction(const signed_transaction& trx) { try {
+       elog("1");
        chain_plugin& cp = app().get_plugin<chain_plugin>();
+       elog("2");
+//       elog("3");
        cp.accept_transaction( packed_transaction(trx), nullptr );
-    } FC_CAPTURE_AND_RETHROW( (transaction_header(trx)) ) }
+    } FC_CAPTURE_AND_RETHROW( (trx) )}
 
-    void create_account(const std::string& acc_name) {
-        //fc::crypto::private_key producer_priv_key(std::string("5KQwrPbwdL6PhXujxW37FSSQZ1JiwsST4cqQzDeyXtP79zkvFD3"));
-        controller& chain_controller = app().get_plugin<chain_plugin>().chain();
-//        auto chainid = app().get_plugin<chain_plugin>().get_chain_id();
-        abi_serializer serializer = fc::json::from_string(vim_contract_abi).as<abi_def>();
 
-        action act;
-        act.account = N(eosio);
-        act.name = N(createacc);
-        act.authorization = vector<permission_level>{{name("newacc"), config::active_name}};
-        act.data = serializer.variant_to_binary(
-                    "createacc", fc::json::from_file(
-                        fc::format_string(
-                            "{\"account\":\"${acc_name}\"}",
-                            fc::mutable_variant_object()("acc_name", acc_name))));
-
-        signed_transaction trx;
-        trx.actions.push_back(act);
-        trx.expiration = chain_controller.head_block_time() + fc::seconds(30);
-        trx.set_reference_block(chain_controller.head_block_id());
-//        trx.sign(producer_priv_key, chainid);
-        push_transaction(trx);
-    }
-
-    void create_post(const std::string& acc_name, const std::string& url, const std::string& hash, const std::string& requesting_acc_name, const std::string& key) {
-        controller& chain_controller = app().get_plugin<chain_plugin>().chain();
-        abi_serializer serializer = fc::json::from_string(vim_contract_abi).as<abi_def>();
-
-        action act;
-        act.account = N(eosio); //
-        act.name = N(createpost);
-        act.authorization = vector<permission_level>{{name(requesting_acc_name), config::active_name}}; //
-        act.data = serializer.variant_to_binary(
-                    "createpost", fc::json::from_file(
-                        fc::format_string(
-                            "{\"creator\":\"${acc_name}\", \"url_photo\":\"${url}\", \"hash_photo\":\"${hash}\"}",
-                            fc::mutable_variant_object()("acc_name", acc_name)("url", url)("hash", hash))));
-
-        signed_transaction trx;
-        trx.actions.push_back(act);
-        trx.expiration = chain_controller.head_block_time() + fc::seconds(30);
-        trx.set_reference_block(chain_controller.head_block_id());
-        push_transaction(trx);
-    }
-
-    void transfer(const std::string& from, const std::string& to, const std::string& amount, const std::string& url, const std::string& hash) {
-        controller& chain_controller = app().get_plugin<chain_plugin>().chain();
-        abi_serializer serializer = fc::json::from_string(vim_contract_abi).as<abi_def>();
-
-        action act;
-        act.account = N(eosio); //
-        act.name = N(transfer);
-        act.authorization = vector<permission_level>{{name("newacc"), config::active_name}}; //
-        act.data = serializer.variant_to_binary(
-                    "transfer", fc::json::from_file(
-                        fc::format_string(
-                            "{\"from\":\"${from}\", \"to\":\"${to}\", \"amount\":\"${amount}\", \"url_photo\":\"${url}\", \"hash_photo\":\"${hash}\"}",
-                            fc::mutable_variant_object()("from", from)("to", to)("amount", amount)("url", url)("hash", hash))));
-
-        signed_transaction trx;
-        trx.actions.push_back(act);
-        trx.expiration = chain_controller.head_block_time() + fc::seconds(30);
-        trx.set_reference_block(chain_controller.head_block_id());
-        push_transaction(trx);
+    void get_trx(const signed_transaction &m_trx) {
+//        signed_transaction trx = m_trx;
+        push_transaction(m_trx);
     }
 };
 
@@ -132,9 +75,7 @@ void vim_plugin::plugin_initialize(const variables_map& options) {
 
 void vim_plugin::plugin_startup() {
     app().get_plugin<http_plugin>().add_api({
-        CALL(vim, my, create_account, INVOKE_V_R(my, create_account, std::string), 200),
-        CALL(vim, my, transfer, INVOKE_V_R_R_R_R_R(my, transfer, std::string, std::string, std::string, std::string, std::string), 200),
-        CALL(vim, my, create_post, INVOKE_V_R_R_R_R_R(my, create_post, std::string, std::string, std::string, std::string, std::string), 200)
+        CALL(vim, my, get_trx, INVOKE_V_R(my, get_trx), 200),
     });
 }
 
