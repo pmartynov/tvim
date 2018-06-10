@@ -40,7 +40,15 @@
         {"name":"hash_photo", "type":"string"}
       ]
     },{
-      "name": "post",
+    "name": "createpost",
+    "base": "",
+    "fields": [
+      {"name":"creator", "type":"account_name"},
+      {"name":"url_photo", "type":"string"},
+      {"name":"hash_photo", "type":"string"}
+    ]
+  },{
+      "name": "st_post",
       "base": "post_not_id",
       "fields": [
         {"name":"id", "type":"uint64"}
@@ -78,7 +86,7 @@
       "ricardian_contract": ""
     },{
       "name": "createpost",
-      "type": "post_not_id",
+      "type": "createpost",
       "ricardian_contract": ""
     }
   ],
@@ -96,7 +104,7 @@
       "key_types" : ["uint64"]
     },{
       "name": "posts",
-      "type": "post",
+      "type": "st_post",
       "index_type": "i64",
       "key_names" : ["id"],
       "key_types" : ["uint64"]
