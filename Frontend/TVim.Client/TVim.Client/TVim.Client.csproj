@@ -58,6 +58,8 @@
     <Reference Include="Mono.Android" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Models\Generated\EOS\SignTransactionResult.cs" />
+    <Compile Include="Models\CreatePostArgs.cs" />
     <Compile Include="Models\Generated\EOS\PermissionLevel.cs" />
     <Compile Include="Models\Generated\EOS\Messages.cs" />
     <Compile Include="Models\Generated\EOS\PushTransactionArgs.cs" />

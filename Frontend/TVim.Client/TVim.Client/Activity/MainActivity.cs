@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Android.App;
@@ -10,16 +11,17 @@ using Android.Widget;
 using CheeseBind;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Serialization;
 using TVim.Client.Helpers;
 using TVim.Client.Models;
 
 namespace TVim.Client.Activity
 {
     [Activity(Label = "@string/app_name", Theme = "@style/AppTheme", MainLauncher = true)]
-    public class MainActivity : AppCompatActivity
+    public partial class MainActivity : AppCompatActivity
     {
-        const string AccountName = "test";
-        const string ContractName = "test";
+        const string AccountName = "currency";
+        const string ContractName = "currency";
         const string CreatePostActionName = "createpost";
 
         [BindView(Resource.Id.upload_post)]
@@ -40,6 +42,7 @@ namespace TVim.Client.Activity
             SetContentView(Resource.Layout.activity_main);
             Cheeseknife.Bind(this);
 
+
             _uploadPost.Click += UploadPostClick;
             var posts = new List<Post> { };
 
@@ -55,12 +58,14 @@ namespace TVim.Client.Activity
 
         private async void UploadPostClick(object sender, System.EventArgs e)
         {
-            await GetPost();
-            //var post = await _instagramToTvimAdapter.GetLastPost(_httpManager, _debugAsset, CancellationToken.None);
-            //if (post == null)
+            //var operationResult = await _instagramToTvimAdapter.GetLastPosts(_httpManager, _debugAsset, CancellationToken.None);
+            //if (operationResult == null)
             //    return;
 
-            await CreatePost(null);
+            //await CreatePost(operationResult.Result, CancellationToken.None);
+            await CreatePost();
+
+            await GetPost();
         }
 
         private async Task GetPost()
@@ -79,10 +84,28 @@ namespace TVim.Client.Activity
             var posts = resp.Result.rows?.Where(i => !string.IsNullOrWhiteSpace(i.url_photo)).Select(i => new Post { Url = i.url_photo, AccauntName = i.creator }).ToList();
             if (posts == null || !posts.Any())
                 return;
+
             _adapter.Update(posts);
         }
 
-        public async Task CreatePost(Post post)
+        //public async Task CreatePost(MediaModel model, CancellationToken token)
+        //{
+        //    var args = new CreatePostArgs
+        //    {
+        //        creator = AccountName,
+        //        url_photo = model.url,
+        //        hash_photo = model.ipfs_hash
+
+        //    };
+        //    var getInfo = await _httpManager.PostRequest<JObject>($"{_debugAsset.PluginUrl}/create_post", args, token);
+        //}
+
+
+        //create_account ‘{“account”:“test”}’
+        //transfer ‘{“from”:“test”,“to”:“test2",“amount”:“1.0000 VIM”,“url_photo”:“url”,“hash_photo”:“hash”}’
+        //create_post ‘{“creator”:“test”,“url_photo”:“url”,“hash_photo”:“hash”}’
+
+        public async Task CreatePost()
         {
             var token = CancellationToken.None;
 
@@ -160,19 +183,22 @@ namespace TVim.Client.Activity
                 signatures = new string[0]
             };
 
-            var signTransaction = await _httpManager.PostRequest<AbiJsonToBinResult>($"{_debugAsset.WalletUrl}/sign_transaction",
-                new object[]
+            var t2 = new object[]
+            {
+                pushTransactionArgs,
+                new[]
                 {
-                    pushTransactionArgs,
-                    new[]
-                    {
-                        getAccount.Result.permissions.FirstOrDefault(p => p.perm_name == "active").required_auth.keys[0].key
-                    },
-                    ""
-                }, token);
+                    getAccount.Result.permissions.FirstOrDefault(p => p.perm_name == "active").required_auth.keys[0].key
+                },
+                ""
+            };
 
-            var r = signTransaction;
+            var signTransaction = await _httpManager.PostRequest<SignTransactionResult>($"{_debugAsset.WalletUrl}/sign_transaction", t2, token);
 
+            pushTransactionArgs.signatures = signTransaction.Result.signatures.ToArray();
+            var t3 = await _httpManager.PostRequest<JObject>($"{_debugAsset.PluginUrl}/get_trx", pushTransactionArgs, token);
+
+            var tt1 = t3;
             //const std::string& acc_name, const std::string& url, const std::string& hash, const std::string& requesting_acc_name, const std::string& key
         }
     }

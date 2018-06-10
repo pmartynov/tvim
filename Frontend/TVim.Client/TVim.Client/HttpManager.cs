@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using TVim.Client.Helpers;
 using TVim.Client.Models;
 using TVim.Client.Models.Errors;
@@ -19,6 +20,7 @@ namespace TVim.Client
         #region Fields
 
         private readonly System.Net.Http.HttpClient _client;
+        private JsonSerializerSettings Settings;
 
 
         #endregion
@@ -29,6 +31,11 @@ namespace TVim.Client
         public HttpManager()
         {
             _client = new HttpClient();
+
+            Settings = new JsonSerializerSettings
+            {
+                DateFormatString = "yyyy'-'MM'-'dd'T'HH':'mm':'ss.fffffffK"
+            };
         }
 
         #endregion
@@ -77,7 +84,7 @@ namespace TVim.Client
                 HttpContent content = null;
                 if (data != null)
                 {
-                    var param = JsonConvert.SerializeObject(data);
+                    var param = JsonConvert.SerializeObject(data, Settings);
                     content = new StringContent(param, Encoding.UTF8, "application/json");
                 }
 
@@ -151,7 +158,7 @@ namespace TVim.Client
                 {
                     var content = await response.Content.ReadAsStringAsync();
                     if (!string.IsNullOrEmpty(content))
-                        result.Result = JsonConvert.DeserializeObject<T>(content);
+                        result.Result = JsonConvert.DeserializeObject<T>(content, Settings);
                 }
                 else
                 {

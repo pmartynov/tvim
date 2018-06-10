@@ -16,6 +16,9 @@ namespace TVim.Client.Models
         [JsonProperty("wallet_url")]
         public string WalletUrl { get; set; }
 
+        [JsonProperty("plugin_url")]
+        public string PluginUrl { get; set; }
+
         public string LastLoadedMediaId { get; set; }
 
         [JsonProperty("master_private_key")]
