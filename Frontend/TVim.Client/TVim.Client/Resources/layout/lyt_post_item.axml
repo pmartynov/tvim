@@ -3,11 +3,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
-    <RelativeLayout
-        android:id="@+id/photos_container"
+    <ImageView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <ImageView
-            android:id="@+id/image" />
-    </RelativeLayout>
+        android:layout_height="wrap_content"
+        android:id="@+id/image" />
+    <Button
+        android:id="@+id/get_post"
+        android:text="get image"
+        android:layout_below="@+id/image"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 </RelativeLayout>
